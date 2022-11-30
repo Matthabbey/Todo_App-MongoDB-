@@ -1,26 +1,27 @@
-import mongoose, {Schema} from 'mongoose'
+import mongoose, { Schema } from "mongoose";
 
 interface TodoInstance {
-    _id: String,
-    description: String,
-    status: Boolean
+  _id: String;
+  description: String;
+  status: Boolean;
 }
 
-const TodoModel = new Schema({
+const TodoModel = new Schema(
+  {
     description: {
-        type: String,
-        required: true
-     },
-     status: {
-        type: String,
-        required: true
-     }
-},
-{
-    timestamps: true
-}
-)
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Todo = mongoose.model<TodoInstance>("Todo", TodoModel)
+const Todo = mongoose.model<TodoInstance>("Todo", TodoModel);
 
-export default Todo
+export default Todo;
