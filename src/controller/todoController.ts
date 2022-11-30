@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import Todo from "../model/todoModel";
 
-// CREATE TODO OPERATION
+/** ================ .  CREATE TODO OPERATION ======================*/
 export const createTodo = async (req: Request, res: Response) => {
   const User = new Todo(req.body);
 
@@ -19,7 +19,8 @@ export const createTodo = async (req: Request, res: Response) => {
   }
 };
 
-// GET TODO LIST
+/** ================ GET TODO LIST    ======================*/
+
 export const getAllTodo = async (req: Request, res: Response) => {
   const todo = await Todo.find({});
   try {
@@ -34,7 +35,9 @@ export const getAllTodo = async (req: Request, res: Response) => {
     });
   }
 };
-//UPDATE TODO--LIST
+
+/** ================ UPDATE TODO--LIST   ======================*/
+
 export const updateTODO = async (req: Request, res: Response) => {
   try {
     const update = await Todo.findByIdAndUpdate(req.params.id, req.body);
@@ -50,21 +53,21 @@ export const updateTODO = async (req: Request, res: Response) => {
 };
 
 /** ========================DELETE TODO LIST ============================*/
-export const deleteTODO = async (req: Request, res: Response)=>{
-    try {
-        const deleteMe = await Todo.findByIdAndDelete(req.params.id)
-        if(!deleteMe){
-            res.status(404).json({
-                message: "This item has been deleted"
-            })
-        }
-        res.status(200).json({
-            message: "You have successfully deleted your TODO item"
-        })
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error",
-            route: "todo/delete router",
-          });
+export const deleteTODO = async (req: Request, res: Response) => {
+  try {
+    const deleteMe = await Todo.findByIdAndDelete(req.params.id);
+    if (!deleteMe) {
+      res.status(404).json({
+        message: "This item has been deleted",
+      });
     }
-}
+    res.status(200).json({
+      message: "You have successfully deleted your TODO item",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      route: "todo/delete router",
+    });
+  }
+};
