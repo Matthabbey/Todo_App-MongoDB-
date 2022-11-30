@@ -27,14 +27,14 @@ const mongoose_1 = __importStar(require("mongoose"));
 const TodoModel = new mongoose_1.Schema({
     description: {
         type: String,
-        required: true
+        required: true,
     },
     status: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
 }, {
-    timestamps: true
+    timestamps: true,
 });
 const Todo = mongoose_1.default.model("Todo", TodoModel);
 exports.default = Todo;

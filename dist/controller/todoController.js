@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTODO = exports.updateTODO = exports.getAllTodo = exports.createTodo = void 0;
 const todoModel_1 = __importDefault(require("../model/todoModel"));
-// CREATE TODO OPERATION
+/** ================ .  CREATE TODO OPERATION ======================*/
 const createTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const User = new todoModel_1.default(req.body);
     try {
@@ -32,7 +32,7 @@ const createTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.createTodo = createTodo;
-// GET TODO LIST
+/** ================ GET TODO LIST    ======================*/
 const getAllTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const todo = yield todoModel_1.default.find({});
     try {
@@ -49,7 +49,7 @@ const getAllTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getAllTodo = getAllTodo;
-//UPDATE TODO--LIST
+/** ================ UPDATE TODO--LIST   ======================*/
 const updateTODO = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const update = yield todoModel_1.default.findByIdAndUpdate(req.params.id, req.body);
@@ -71,11 +71,11 @@ const deleteTODO = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const deleteMe = yield todoModel_1.default.findByIdAndDelete(req.params.id);
         if (!deleteMe) {
             res.status(404).json({
-                message: "This item has been deleted"
+                message: "This item has been deleted",
             });
         }
         res.status(200).json({
-            message: "You have successfully deleted your TODO item"
+            message: "You have successfully deleted your TODO item",
         });
     }
     catch (error) {
