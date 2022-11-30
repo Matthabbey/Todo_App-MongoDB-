@@ -6,7 +6,7 @@ interface TodoInstance {
     status: Boolean
 }
 
-const TodoModel = new mongoose.Schema({
+const TodoModel = new Schema({
     description: {
         type: String,
         required: true
@@ -21,4 +21,6 @@ const TodoModel = new mongoose.Schema({
 }
 )
 
-const Todo = mongoose.model<TodoInstance>("Todo")
+const Todo = mongoose.model<TodoInstance>("Todo", TodoModel)
+
+export default Todo
