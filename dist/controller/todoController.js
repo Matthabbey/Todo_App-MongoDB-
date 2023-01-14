@@ -53,7 +53,7 @@ exports.getAllTodo = getAllTodo;
 const updateTODO = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const update = yield todoModel_1.default.findByIdAndUpdate(req.params.id, req.body);
-        res.status(200).json({
+        return res.status(200).json({
             message: "Successfully updated",
         });
     }
@@ -70,11 +70,11 @@ const deleteTODO = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const deleteMe = yield todoModel_1.default.findByIdAndDelete(req.params.id);
         if (!deleteMe) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "This item has been deleted",
             });
         }
-        res.status(200).json({
+        return res.status(200).json({
             message: "You have successfully deleted your TODO item",
         });
     }
