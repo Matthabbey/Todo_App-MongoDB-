@@ -3,7 +3,7 @@ import logger from 'morgan';
 import todoRoute from './routes/todoRoute'
 import dotenv from 'dotenv'
 import connectMongoDB from "./config";
-import axios from 'axios'
+import redis from 'redis'
 dotenv.config()
 
 connectMongoDB()
