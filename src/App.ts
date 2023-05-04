@@ -3,6 +3,7 @@ import logger from 'morgan';
 import todoRoute from './routes/todoRoute'
 import dotenv from 'dotenv'
 import connectMongoDB from "./config";
+import axios from 'axios'
 dotenv.config()
 
 connectMongoDB()
@@ -15,8 +16,8 @@ app.use(logger("dev"))
 app.use('/todo', todoRoute)
 
 
-const port = 8000
+const port = 3000
 
-app.listen(port, ()=>{
-    console.log(`Server running at http://localhost${port}`)
-})
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });

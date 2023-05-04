@@ -10,4 +10,5 @@ router.post("/create", todoController_1.createTodo);
 router.get("/", todoController_1.getAllTodo);
 router.patch("/update/:id", todoController_1.updateTODO);
 router.delete("/delete/:id", todoController_1.deleteTODO);
+router.get("/fish/:species", todoController_1.getFistData);
 exports.default = router;

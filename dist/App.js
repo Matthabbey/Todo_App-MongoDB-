@@ -15,7 +15,7 @@ app.use(express_1.default.json());
 app.use((0, morgan_1.default)("dev"));
 //Routes to endpoints
 app.use('/todo', todoRoute_1.default);
-const port = 8000;
+const port = 3000;
 app.listen(port, () => {
-    console.log(`Server running at http://localhost${port}`);
+    console.log(`Server running at http://localhost:${port}`);
 });

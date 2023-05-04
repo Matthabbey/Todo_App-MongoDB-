@@ -12,8 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTODO = exports.updateTODO = exports.getAllTodo = exports.createTodo = void 0;
+exports.deleteTODO = exports.updateTODO = exports.getAllTodo = exports.createTodo = exports.getFistData = void 0;
 const todoModel_1 = __importDefault(require("../model/todoModel"));
+const utility_1 = require("../utils/utility");
+const getFistData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const species = req.params.species;
+        const response = yield (0, utility_1.fetchApiData)(species);
+        if (response.length === 0) {
+            return res.status(404).json({ error: "Not found/ an array is empty" });
+        }
+        return res.status(200).json({ fromCache: false, message: response });
+    }
+    catch (error) {
+        console.log(error);
+        res.json({ error: `error ${error}` });
+    }
+});
+exports.getFistData = getFistData;
 /** ================ .  CREATE TODO OPERATION ======================*/
 const createTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const User = new todoModel_1.default(req.body);
