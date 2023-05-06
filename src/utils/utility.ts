@@ -1,4 +1,5 @@
 import axios from 'axios'
+import redis from 'redis'
 
 
 export const fetchApiData = async (species:string) => {
@@ -9,3 +10,4 @@ export const fetchApiData = async (species:string) => {
     return response.data
     
   }
+

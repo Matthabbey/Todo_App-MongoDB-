@@ -1,10 +1,13 @@
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
+import redis from 'redis'
 
-const connectMongoDB = async ()=>{
+let redisClient
 
- const connect = await mongoose.connect(process.env.DATABASE_URL!)
- console.log(`Connection to MONGODB is successful`)
-}
-
-export default connectMongoDB
+const RedisClientDB = async () => {
+    redisClient = redis.createClient();
+  
+    redisClient.on("error", (error) => console.error(`Error : ${error}`));
+  
+    await redisClient.connect();
+  }
+  
+  export default RedisClientDB();

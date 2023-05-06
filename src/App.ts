@@ -4,9 +4,9 @@ import todoRoute from './routes/todoRoute'
 import dotenv from 'dotenv'
 import connectMongoDB from "./config";
 import redis from 'redis'
+import redisClientDB from "./config";
 dotenv.config()
 
-connectMongoDB()
 
 const app = express()
 app.use(express.json())

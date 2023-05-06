@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const connect = yield mongoose_1.default.connect(process.env.DATABASE_URL);
-    console.log(`Connection to MONGODB is successful`);
+const redis_1 = __importDefault(require("redis"));
+let redisClient;
+const RedisClientDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    redisClient = redis_1.default.createClient();
+    redisClient.on("error", (error) => console.error(`Error : ${error}`));
+    yield redisClient.connect();
 });
-exports.default = connectMongoDB;
+exports.default = RedisClientDB();

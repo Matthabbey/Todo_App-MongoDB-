@@ -1,29 +1,64 @@
 import express, { Request, Response } from "express";
 import Todo from "../model/todoModel";
-import axios from 'axios'
+import Redis from "redis"
+import axios from "axios";
 import { fetchApiData } from "../utils/utility";
+import redisClientDB from "../config";
+
+// let redisClient: any
+// redisClient = redis.createClient();
+
+// const RedisClientDB = async () => {
+  
+//     redisClient.on("error", (error: string) => console.error(`Error : ${error}`));
+  
+//     await redisClient.connect();
+//   }
+  
+// RedisClientDB();
+
+const client = Redis.createClient();
+
+client.on('error', (error) => {
+  console.error(error);
+});
+
+client.on('connect', () => {
+  console.log('Redis client connected');
+});
+
+client.on('ready', () => {
+  console.log('Redis client ready');
+});
+
+client.on('end', () => {
+  console.log('Redis client disconnected');
+});
 
 
-export const getFistData = async (req: Request, res: Response) =>{
-
+export const getFistData = async (req: Request, res: Response) => {
+  const species = req.params.species;
+  let isCaches = false;
+  let results
   try {
-    const species = req.params.species
-      const response = await fetchApiData(species)
+    const cacheResult = await client.get(species);
+    if (cacheResult) {
+      isCaches = true;
+       results = JSON.parse(cacheResult);
+    }
+    const response = await fetchApiData(species);
 
-      if(response.length === 0){
-         return res.status(404).json({error: "Not found/ an array is empty"})
-      }
-      return res.status(200).json({fromCache: false, message: response})
-    
+    if (response.length === 0) {
+      return res.status(404).json({ error: "Not found/ an array is empty" });
+    }
+    await client.set(species, JSON.stringify(results))
+
+    // return res.status(200).json({ fromCache: isCaches, message: response });
   } catch (error) {
-    console.log(error)
-    res.json({error: `error ${error}`})
+    console.log(error);
+    res.json({ error: `error ${error}` });
   }
-}
-
-
-
-
+};
 
 /** ================ .  CREATE TODO OPERATION ======================*/
 export const createTodo = async (req: Request, res: Response) => {
@@ -65,7 +100,7 @@ export const getAllTodo = async (req: Request, res: Response) => {
 export const updateTODO = async (req: Request, res: Response) => {
   try {
     const update = await Todo.findByIdAndUpdate(req.params.id, req.body);
-   return res.status(200).json({
+    return res.status(200).json({
       message: "Successfully updated",
     });
   } catch (error) {

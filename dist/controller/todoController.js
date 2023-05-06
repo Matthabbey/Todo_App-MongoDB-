@@ -14,15 +14,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTODO = exports.updateTODO = exports.getAllTodo = exports.createTodo = exports.getFistData = void 0;
 const todoModel_1 = __importDefault(require("../model/todoModel"));
+const redis_1 = __importDefault(require("redis"));
 const utility_1 = require("../utils/utility");
+// let redisClient: any
+// redisClient = redis.createClient();
+// const RedisClientDB = async () => {
+//     redisClient.on("error", (error: string) => console.error(`Error : ${error}`));
+//     await redisClient.connect();
+//   }
+// RedisClientDB();
+const client = redis_1.default.createClient();
+client.on('error', (error) => {
+    console.error(error);
+});
+client.on('connect', () => {
+    console.log('Redis client connected');
+});
+client.on('ready', () => {
+    console.log('Redis client ready');
+});
+client.on('end', () => {
+    console.log('Redis client disconnected');
+});
 const getFistData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const species = req.params.species;
+    let isCaches = false;
+    let results;
     try {
-        const species = req.params.species;
+        const cacheResult = yield client.get(species);
+        if (cacheResult) {
+            isCaches = true;
+            results = JSON.parse(cacheResult);
+        }
         const response = yield (0, utility_1.fetchApiData)(species);
         if (response.length === 0) {
             return res.status(404).json({ error: "Not found/ an array is empty" });
         }
-        return res.status(200).json({ fromCache: false, message: response });
+        yield client.set(species, JSON.stringify(results));
+        // return res.status(200).json({ fromCache: isCaches, message: response });
     }
     catch (error) {
         console.log(error);
