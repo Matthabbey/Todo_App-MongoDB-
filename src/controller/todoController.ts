@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import Todo from "../model/todoModel";
-import Redis from "redis"
+import { createClient } from "redis"
 import axios from "axios";
 import { fetchApiData } from "../utils/utility";
 import redisClientDB from "../config";
@@ -17,7 +17,9 @@ import redisClientDB from "../config";
   
 // RedisClientDB();
 
-const client = Redis.createClient();
+const client = createClient({legacyMode: true});
+// console.log(client);
+
 
 client.on('error', (error) => {
   console.error(error);
@@ -34,7 +36,11 @@ client.on('ready', () => {
 client.on('end', () => {
   console.log('Redis client disconnected');
 });
-
+client.connect().then(() => {
+  console.log('Connected to Redis');
+}).catch((err) => {
+  console.log(err.message);
+})
 
 export const getFistData = async (req: Request, res: Response) => {
   const species = req.params.species;
@@ -51,7 +57,7 @@ export const getFistData = async (req: Request, res: Response) => {
     if (response.length === 0) {
       return res.status(404).json({ error: "Not found/ an array is empty" });
     }
-    await client.set(species, JSON.stringify(results))
+    await client.set(species,  JSON.stringify(results))
 
     // return res.status(200).json({ fromCache: isCaches, message: response });
   } catch (error) {

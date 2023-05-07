@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTODO = exports.updateTODO = exports.getAllTodo = exports.createTodo = exports.getFistData = void 0;
 const todoModel_1 = __importDefault(require("../model/todoModel"));
-const redis_1 = __importDefault(require("redis"));
+const redis_1 = require("redis");
 const utility_1 = require("../utils/utility");
 // let redisClient: any
 // redisClient = redis.createClient();
@@ -23,7 +23,8 @@ const utility_1 = require("../utils/utility");
 //     await redisClient.connect();
 //   }
 // RedisClientDB();
-const client = redis_1.default.createClient();
+const client = (0, redis_1.createClient)({ legacyMode: true });
+// console.log(client);
 client.on('error', (error) => {
     console.error(error);
 });
@@ -35,6 +36,11 @@ client.on('ready', () => {
 });
 client.on('end', () => {
     console.log('Redis client disconnected');
+});
+client.connect().then(() => {
+    console.log('Connected to Redis');
+}).catch((err) => {
+    console.log(err.message);
 });
 const getFistData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const species = req.params.species;
