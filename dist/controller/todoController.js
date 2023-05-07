@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,7 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTODO = exports.updateTODO = exports.getAllTodo = exports.createTodo = exports.getFistData = void 0;
 const todoModel_1 = __importDefault(require("../model/todoModel"));
-const redis_1 = require("redis");
+const redis = __importStar(require("redis"));
 const utility_1 = require("../utils/utility");
 // let redisClient: any
 // redisClient = redis.createClient();
@@ -23,31 +46,41 @@ const utility_1 = require("../utils/utility");
 //     await redisClient.connect();
 //   }
 // RedisClientDB();
-const client = (0, redis_1.createClient)({ legacyMode: true });
-// console.log(client);
-client.on('error', (error) => {
-    console.error(error);
-});
-client.on('connect', () => {
-    console.log('Redis client connected');
-});
-client.on('ready', () => {
-    console.log('Redis client ready');
-});
-client.on('end', () => {
-    console.log('Redis client disconnected');
-});
-client.connect().then(() => {
-    console.log('Connected to Redis');
-}).catch((err) => {
-    console.log(err.message);
-});
+// const client = createClient({ legacyMode: true });
+// // console.log(client);
+// client.on("error", (error) => {
+//   console.error(error);
+// });
+// client.on("connect", () => {
+//   console.log("Redis client connected");
+// });
+// client.on("ready", () => {
+//   console.log("Redis client ready");
+// });
+// client.on("end", () => {
+//   console.log("Redis client disconnected");
+// });
+// client
+//   .connect()
+//   .then(() => {
+//     console.log("Connected to Redis");
+//   })
+//   .catch((err) => {
+//     console.log(err.message);
+//   });
+let redisClient;
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    redisClient = redis.createClient();
+    redisClient.on("error", (error) => console.error(`Error : ${error}`));
+    yield redisClient.connect();
+}))();
 const getFistData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const species = req.params.species;
     let isCaches = false;
     let results;
     try {
-        const cacheResult = yield client.get(species);
+        const cacheResult = yield redisClient.get(species);
+        console.log(cacheResult);
         if (cacheResult) {
             isCaches = true;
             results = JSON.parse(cacheResult);
@@ -56,8 +89,8 @@ const getFistData = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (response.length === 0) {
             return res.status(404).json({ error: "Not found/ an array is empty" });
         }
-        yield client.set(species, JSON.stringify(results));
-        // return res.status(200).json({ fromCache: isCaches, message: response });
+        yield redisClient.set(species, JSON.stringify(results));
+        return res.status(200).json({ fromCache: isCaches, message: response });
     }
     catch (error) {
         console.log(error);

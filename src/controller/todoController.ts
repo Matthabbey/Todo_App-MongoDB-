@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import Todo from "../model/todoModel";
-import { createClient } from "redis"
+import { createClient } from "redis";
+import * as redis from 'redis'
 import axios from "axios";
 import { fetchApiData } from "../utils/utility";
 import redisClientDB from "../config";
@@ -9,57 +10,71 @@ import redisClientDB from "../config";
 // redisClient = redis.createClient();
 
 // const RedisClientDB = async () => {
-  
+
 //     redisClient.on("error", (error: string) => console.error(`Error : ${error}`));
-  
+
 //     await redisClient.connect();
 //   }
-  
+
 // RedisClientDB();
 
-const client = createClient({legacyMode: true});
-// console.log(client);
+// const client = createClient({ legacyMode: true });
+// // console.log(client);
 
+// client.on("error", (error) => {
+//   console.error(error);
+// });
 
-client.on('error', (error) => {
-  console.error(error);
-});
+// client.on("connect", () => {
+//   console.log("Redis client connected");
+// });
 
-client.on('connect', () => {
-  console.log('Redis client connected');
-});
+// client.on("ready", () => {
+//   console.log("Redis client ready");
+// });
 
-client.on('ready', () => {
-  console.log('Redis client ready');
-});
+// client.on("end", () => {
+//   console.log("Redis client disconnected");
+// });
+// client
+//   .connect()
+//   .then(() => {
+//     console.log("Connected to Redis");
+//   })
+//   .catch((err) => {
+//     console.log(err.message);
+//   });
 
-client.on('end', () => {
-  console.log('Redis client disconnected');
-});
-client.connect().then(() => {
-  console.log('Connected to Redis');
-}).catch((err) => {
-  console.log(err.message);
-})
+let redisClient: any;
+
+(async () => {
+  redisClient = redis.createClient();
+
+  redisClient.on("error", (error: any) => console.error(`Error : ${error}`));
+
+  await redisClient.connect();
+})();
 
 export const getFistData = async (req: Request, res: Response) => {
   const species = req.params.species;
   let isCaches = false;
-  let results
+  let results;
   try {
-    const cacheResult = await client.get(species);
+    const cacheResult = await redisClient.get(species);
+    console.log(cacheResult);
+    
     if (cacheResult) {
       isCaches = true;
-       results = JSON.parse(cacheResult);
+      results = JSON.parse(cacheResult);
     }
     const response = await fetchApiData(species);
 
     if (response.length === 0) {
       return res.status(404).json({ error: "Not found/ an array is empty" });
     }
-    await client.set(species,  JSON.stringify(results))
+    await redisClient.set(species, JSON.stringify(results));
 
-    // return res.status(200).json({ fromCache: isCaches, message: response });
+    return res.status(200).json({ fromCache: isCaches, message: response });
   } catch (error) {
     console.log(error);
     res.json({ error: `error ${error}` });
